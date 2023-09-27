@@ -27,7 +27,7 @@ import java.util.concurrent.Future;
 * */
 
 public class ExpressionEvaluator {
-    private static final String URL="https://OnlineSales.ai/evaluate-expression";
+    private static final String URL="https://OnlineSales.ai/evaluatesexpression";
     private static final int batchSize=50;
     public static List<List<String>> buildBatches(List<String> expressions,int noOfExpressions){
         List<List<String>> expressionBatches=new ArrayList<>();

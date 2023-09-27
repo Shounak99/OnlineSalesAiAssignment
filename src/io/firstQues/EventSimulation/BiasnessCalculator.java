@@ -3,6 +3,7 @@
 
 package io.firstQues.EventSimulation;
 
+import java.awt.geom.Arc2D;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -21,33 +22,27 @@ import java.util.Scanner;
 public class BiasnessCalculator {
     public Map<Integer,Double> outcomesAndBias; //Storing the outcomes and probability in map
 
-    double cumulativeProbability;
-    Random random;
-    BiasnessCalculator(){
-        outcomesAndBias=new HashMap<>();
-        random=new Random();
-        cumulativeProbability=0.0;
-    }
-    public void insertOutcomes(int outcome,double probability){
-        double totalProbability=0.0;
-        try {
-            totalProbability+=probability;
-            if(totalProbability<0.0 || totalProbability>1.0){   //if totalProbability <0.0 or >1.0 then it is invalid
-                throw new InvalidProbabilityException("Total probability should be between 0.0 and 1.0");
-            }
-            outcomesAndBias.put(outcome, probability);
 
-        }catch(InvalidProbabilityException e){
-            e.printStackTrace();
+    Random random;
+    public BiasnessCalculator(Map<Integer,Double>  map){
+        outcomesAndBias=map;
+        random=new Random();
+
+    }
+    public void isTotalProbabilityValid(){
+
+        double totalProbability=0.0;
+        for(Map.Entry<Integer,Double> entry:outcomesAndBias.entrySet()){
+            totalProbability+=entry.getValue();
         }
-        cumulativeProbability=totalProbability;
         try{
-            if(Math.abs(cumulativeProbability-1.0)>0.01){   //final cumulative probability should be as close to 0.01 as possible
-                throw new InvalidProbabilityException("Total probability should be between 0.0 and 1.0");
+            if(Math.abs(totalProbability-1.0)>0.01){
+                throw new InvalidProbabilityException("Cumulative probability should be almost equal to 1,0");
             }
-        }catch(InvalidProbabilityException e){
+        }catch (InvalidProbabilityException e){
             e.printStackTrace();
         }
+
     }
     public int performSimulations(){
             int result=-1;
@@ -60,7 +55,9 @@ public class BiasnessCalculator {
                         result=events.getKey();
                     }
                 }
-                throw new InvalidScenarioSimulationException("Event cannot be simulated");
+                if(result==-1) {
+                    throw new InvalidScenarioSimulationException("Event cannot be simulated");
+                }
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -68,18 +65,18 @@ public class BiasnessCalculator {
     }
 
     public static void main(String[] args){
-        BiasnessCalculator biasnessCalculator=new BiasnessCalculator();
 
-        Scanner sc=new Scanner(System.in);
-        int numberOfOutcomes= sc.nextInt();
+
+        Map<Integer,Double> map=new HashMap<>();
         //Initializing the outcomes and probabalities in map
-        for(int i=0;i<numberOfOutcomes;i++){
-            int outcome=sc.nextInt();
-            double probability=sc.nextDouble();
-            biasnessCalculator.insertOutcomes(outcome,probability);
-        }
+        map.put(1,0.1);
+        map.put(2,0.4);
+        map.put(3,0.3);
+        map.put(4,0.2);
+        BiasnessCalculator biasnessCalculator=new BiasnessCalculator(map);
+        biasnessCalculator.isTotalProbabilityValid();
 
-        int numberOfSimulations=sc.nextInt();
+        int numberOfSimulations=1000;
         //Calculating the result of simulations
         for(int i=0;i<numberOfSimulations;i++){
             int result=biasnessCalculator.performSimulations();

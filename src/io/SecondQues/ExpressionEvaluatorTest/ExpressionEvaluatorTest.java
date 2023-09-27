@@ -2,6 +2,8 @@ package io.SecondQues.ExpressionEvaluatorTest;
 import io.SecondQues.ExpressionEvaluator.ExpressionEvaluator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,20 +16,17 @@ public class ExpressionEvaluatorTest {
     }
 
     @Test
-    void testEvaluateExpression() {
-        String validExpression = "2+2";
-        String invalidExpression = "5/0";
+    void testSubmitExpression(){
+        List<String> expressions= Arrays.asList("5+9","6*9","9/1","sqrt(4)");
+        List<List<String>> batches=expressionEvaluator.buildBatches(expressions,expressions.size());
+        List<String> result=expressionEvaluator.submitExpression(batches);
+        assertEquals(result.size(),expressions.size());
 
-        String validResult = expressionEvaluator.evaluateExpression(validExpression);
-        String invalidResult = expressionEvaluator.evaluateExpression(invalidExpression);
-
-        assertTrue(validResult.contains("Result:"));
-        assertTrue(invalidResult.contains("Error:"));
     }
 
     @Test
     void testEvaluateExpressions() {
-        List<String> expressions = List.of("2+2", "3*4", "5/0", "sqrt(16)");
+        List<String> expressions = Arrays.asList("2+2", "3*4", "5/0", "sqrt(16)");
         int n=expressions.size();
         List<List<String>> batches=expressionEvaluator.buildBatches(expressions,n);
 

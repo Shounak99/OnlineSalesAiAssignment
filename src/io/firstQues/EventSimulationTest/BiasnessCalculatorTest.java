@@ -5,17 +5,32 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 import static org.junit.Assert.*;
+
 public class BiasnessCalculatorTest {
     private BiasnessCalculator biasnessCalculator;
+    private Map<Integer,Double> map;
     @Before
     public void setUp(){
-        biasnessCalculator.insertOutcomes(1,0.2);
-        biasnessCalculator.insertOutcomes(2,0.3);
-        biasnessCalculator.insertOutcomes(3,0.4);
-        biasnessCalculator.insertOutcomes(4,0.1);
+        map = new HashMap<>();
+        map.put(1,0.2);
+        map.put(2,0.7);
+        map.put(3,0.1);
+        biasnessCalculator=new BiasnessCalculator(map);
+
+
     }
+
     @Test
-    public void performSimulationsTes(){
+    public void isProbabilityValidTest(){
+        double totalProbability=0.0;
+        for(Double values:biasnessCalculator.outcomesAndBias.values()){
+            totalProbability+=values;
+        }
+        assertEquals(1.0,totalProbability,0.01);
+    }
+
+    @Test
+    public void performSimulationsTest(){
         for(int i=0;i<100;i++){
             int result=biasnessCalculator.performSimulations();
             assertTrue(biasnessCalculator.outcomesAndBias.containsKey(result));
